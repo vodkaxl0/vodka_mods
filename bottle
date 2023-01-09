@@ -1,19 +1,40 @@
-from random import randint
+import telebot
+token = 'Ao542GXJ1ok:AJDAQ6-lk7678zler6_P36fjke'
+bot = telebot.TeleBot(token)
 
-#основная функция
-def game(): 
-    #количество игроков 
-    n = int(input('Введите количество игроков: '))
-    
-    # генерируем рандомное число 
-    i = randint(1, n) 
-    print('У кого будет последняя бутылочка? \nПосчитайте до {}'.format(i))
 
-    # инлайн кнопки подтверждения 
-    answer = input('Введите \n1.Да \n2.Нет \n')
-    if answer == '1': 
-        print('Ну и ладно, я посчитал до {}.\nУ кого бутылочка?'.format(i)) 
-    else: 
-        print('Нет! Пора ставить бутылочку!') 
+# Обработка команд
 
-game()
+@bot.message_handler(commands=['start'])
+def start_game(message):
+    # Приветствие
+    bot.send_message(message.chat.id, 'Добро пожаловать в игру в бутылочку! Щелкни на одну из кнопок, чтобы начать')
+
+    # Выведем инлайн кнопки
+    keyboard = telebot.types.InlineKeyboardMarkup()
+    # Первая кнопка - для выбора команды 'Подбросить'
+    key_throw = telebot.types.InlineKeyboardButton(text='Подбросить', callback_data='throw')
+    # Добавляем кнопку в нашу клавиатуру
+    keyboard.add(key_throw)
+    # Отправляем сообщение с клавиатурой
+    bot.send_message(message.chat.id, text='Какое действие вы выбираете?', reply_markup=keyboard)
+
+
+# Обработка инлайн кнопок
+
+@bot.callback_query_handler(func=lambda call: True)
+def callback_inline(call):
+    # Если сообщение из чата с ботом
+    if call.message:
+        if call.data == 'throw':
+            # Подбрасываем бутылочку (Обратите внимание, в данном случае имеется две направления:)
+            bot.send_message(call.message.chat.id, 'У вас получилось!')
+            # Отправим кнопки пользователю
+            keyboard = telebot.types.InlineKeyboardMarkup()
+            # Первая кнопка - для выбора команды 'Продолжить'
+            key_continue = telebot.types.InlineKeyboardButton(text='Продолжить', callback_data='continue')
+            # Добавляем кнопки в нашу клавиатуру
+            keyboard.add(key_continue)
+            # Отправляем сообщение с клавиатурой
+            bot.send_message(call.message.chat.id, text='Что будете делать дальше?', reply_markup=keyboard)
+    # Если сообще
