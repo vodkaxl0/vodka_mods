@@ -1,0 +1,26 @@
+import random
+
+print("Правила игры в бутылочку:")
+print("Два игрока протягивают друг другу по очереди бутылку и принимают решение о продолжении игры или завершении её.")
+
+num = int(input("Введите количество игроков: "))
+
+player = []
+for i in range(num):
+    player.append(input("Введите имя игрока: "))
+
+begin = input("Начать игру? (да/нет): ")
+
+if begin == "да":
+    while True:
+        winner = random.choice(player)
+        print("Победитель этого раунда - ", winner)
+
+        choice = input("Хотите продолжить игру? (да/нет): ")
+        if choice == "да":
+            continue
+        else:
+            print("Игра завершена.")
+            break
+else:
+    print("Игра не начата.")
