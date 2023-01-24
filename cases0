@@ -1,0 +1,17 @@
+import pymorphy2
+
+morph = pymorphy2.MorphAnalyzer()
+
+def decline_word(word):
+    return {
+      "nominative": morph.parse(word)[0].inflect({'nomn'}).word,
+      "genitive": morph.parse(word)[0].inflect({'gent'}).word,
+      "accusative": morph.parse(word)[0].inflect({'accs'}).word,
+            "dative": morph.parse(word)[0].inflect({'datv'}).word,
+            "instrumental": morph.parse(word)[0].inflect({'ablt'}).word
+            }
+
+word = input("Enter a word: ")
+declined_word = decline_word(word)
+
+print(declined_word)
