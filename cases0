@@ -1,17 +1,66 @@
-import pymorphy2
+# Declension module for user-bot Hikka
 
-morph = pymorphy2.MorphAnalyzer()
+# Required import
+import re
 
-def decline_word(word):
-    return {
-      "nominative": morph.parse(word)[0].inflect({'nomn'}).word,
-      "genitive": morph.parse(word)[0].inflect({'gent'}).word,
-      "accusative": morph.parse(word)[0].inflect({'accs'}).word,
-            "dative": morph.parse(word)[0].inflect({'datv'}).word,
-            "instrumental": morph.parse(word)[0].inflect({'ablt'}).word
-            }
+# Define the rules for inflection
+inflection_rules = {
+    "noun": {
+        "nom": "[a-zA-Z]+",
+        "gen": "[a-zA-Z]+s",
+        "dat": "[a-zA-Z]+e",
+        "acc": "[a-zA-Z]+n",
+        "abl": "[a-zA-Z]+em"
+    },
+    "adj": {
+        "nom": "[a-zA-Z]+e",
+        "gen": "[a-zA-Z]+en",
+        "dat": "[a-zA-Z]+en",
+        "acc": "[a-zA-Z]+en",
+        "abl": "[a-zA-Z]+en"
+    }
+}
 
-word = input("Enter a word: ")
-declined_word = decline_word(word)
+# Declension function 
+def decline(word, case):
+    """ 
+    Declines a given word for a given case.
+    
+    Parameters:
+        word (string): The word to decline.
+        case (string): The case to decline the word for.
 
-print(declined_word)
+    Returns:
+        string: The declined word.
+    """
+
+    # Determine the type of word
+    type_of_word = get_type(word)
+
+    # Return error if word is not a noun or adjective
+    if type_of_word not in inflection_rules:
+        return "Error: Word is not a noun or adjective"
+
+    # Prepare the regex pattern for the case
+    pattern = inflection_rules[type_of_word][case]
+
+    # Perform the replacement
+    return re.sub(pattern, word, case)
+
+# Get type function
+def get_type(word):
+    """ 
+    Determines the type of a given word (noun or adjective).
+    
+    Parameters:
+        word (string): The word to determine the type of.
+
+    Returns:
+        string: The type of word (noun or adjective).
+    """
+
+    # Check if the word ends with 's'
+    ends_with_s = word[-1] == 's'
+
+    # Return noun or adjective
+    return 'adj' if ends_with_s else 'noun'
